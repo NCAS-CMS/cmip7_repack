@@ -28,7 +28,6 @@ dynamic = [
     "version",
 ]
 dependencies = [
-    "hdf5",
     "pyfive>=1.1.1",
     "packaging",
 ]
