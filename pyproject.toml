@@ -27,7 +27,8 @@ dynamic = [
     "version",
 ]
 dependencies = [
-    "pyfive",
+    "hdf5",
+    "pyfive>=1.1.1",
     "packaging",
 ]
 description = "CMIP7 data repack tool."

@@ -6,6 +6,7 @@ channels:
 
 dependencies:
   - python >=3.11
+  - hdf5
   - pip
   - packaging
-  - pyfive >=1.0
+  - pyfive >=1.1.1
