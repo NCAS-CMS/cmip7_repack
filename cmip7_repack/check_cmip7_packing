@@ -8,12 +8,17 @@ if __name__ == "__main__":
     import time
 
     from importlib.metadata import version
-    from math import prod
 
     import pyfive
-    import numpy as np
+
 
     from packaging.version import Version
+    try:
+        # If inside an env
+        from cmip7_repack import check_cmip7_packing
+    except ImportError:
+        # if directly called from folder
+        from __init__ import check_cmip7_packing, ParseError
 
     start0 = time.time()
 
@@ -237,86 +242,22 @@ the extent permitted by law.
 
     # Loop round input files
     for filename in args.FILE:
-        # Open the file with pyfive
         try:
-            f = pyfive.File(filename)
+            result, reason = check_cmip7_packing(filename)
         except FileNotFoundError:
             print(f"NON-EXISTENT: File {filename!r}\n\nNO INPUT FILES CHECKED")
             sys.exit(3)
         except PermissionError:
             print(f"CAN'T OPEN: File {filename!r}\n\nNO INPUT FILES CHECKED")
             sys.exit(4)
-        except Exception:
+        except ParseError:
             print(f"CAN'T PARSE: File {filename!r}\n\nNO INPUT FILES CHECKED")
             sys.exit(5)
-
-        # Check for consolidated internal metadata
-        try:
-            if not f.consolidated_metadata:
-                error.append(
-                    f"FAIL: File {filename!r} does not have consolidated "
-                    "internal metadata"
-                )
-                continue
-        except Exception:
-            print(f"CAN'T PARSE: File {filename!r}\n\nNO INPUT FILES CHECKED")
-            sys.exit(5)
-
-        if "time" in f:
-            # Check for the time coordinates variable having one chunk
-            t = f["time"]
-            chunks = t.chunks
-            if chunks is not None and t.id.get_num_chunks() > 1:
-                # At least two chunks
-                error.append(
-                    f"FAIL: File {filename!r} time coordinates variable "
-                    f"'time' has {t.id.get_num_chunks()} chunks "
-                    "(expected 1 chunk or contiguous)"
-                )
-                continue
-
-            # Check for the time bounds variable having one chunk
-            if "bounds" in t.attrs:
-                bounds = str(np.array(t.attrs["bounds"]).astype("U"))
-                if bounds in f:
-                    b = f[bounds]
-                    chunks = b.chunks
-                    if chunks is not None and b.id.get_num_chunks() > 1:
-                        # At least two chunks
-                        error.append(
-                            f"FAIL: File {filename!r} time bounds variable "
-                            f"{bounds!r} has {b.id.get_num_chunks()} chunks "
-                            "(expected 1 chunk or contiguous)"
-                        )
-                        continue
-
-        # Check for the data variable having one chunks of at least ~4MiB
-        if "variable_id" in f.attrs:
-            variable_id = str(np.array(f.attrs["variable_id"]).astype("U"))
-            if variable_id in f:
-                d = f[variable_id]
-                if chunks is not None and d.id.get_num_chunks() > 1:
-                    # At least two chunks
-                    chunks = d.chunks
-                    wordsize = d.dtype.itemsize
-                    chunksize = prod(chunks) * wordsize
-
-                    lee_way = 0
-                    if len(chunks) > 1:
-                        lee_way = prod(chunks[1:]) * wordsize
-
-                    if chunksize + lee_way < four_MiB:
-                        error.append(
-                            f"FAIL: File {filename!r} data variable "
-                            f"{variable_id!r} has uncompressed chunk size "
-                            f"{chunksize} B (expected at least "
-                            f"{four_MiB - lee_way} B or 1 chunk "
-                            "or contiguous)"
-                        )
-                        continue
-
-        # Still here? Then the file has passed all of the checks.
-        ok.append(f"PASS: File {filename!r}")
+        else:
+            if result:
+                ok.append(reason)
+            else:
+                error.append(reason)
 
     if ok:
         print("\n".join(ok))
