@@ -289,7 +289,8 @@ the extent permitted by law.
                             "(expected 1 chunk or contiguous)"
                         )
                         continue
-
+        else:
+            chunks = None  # Needed for time independent files
         # Check for the data variable having one chunks of at least ~4MiB
         if "variable_id" in f.attrs:
             variable_id = str(np.array(f.attrs["variable_id"]).astype("U"))
