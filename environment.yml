@@ -5,8 +5,8 @@ channels:
   - nodefaults
 
 dependencies:
-  - python >=3.10
+  - python >=3.11
   - hdf5
   - pip
   - packaging
-  - pyfive >=1.1.1
+  - pyfive >=1.2.0
