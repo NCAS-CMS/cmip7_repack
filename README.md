@@ -281,7 +281,7 @@ SEE ALSO
 
 ### Dependencies
 
-`check_cmip7_packing` is a Python script that requires Python 3.10 or
+`check_cmip7_packing` is a Python script that requires Python 3.11 or
 later, and that the Python libraries
 [pyfive](https://pyfive.readthedocs.io), [numpy](https://numpy.org),
 and [packaging](https://packaging.pypa.io) are available from a
@@ -326,7 +326,7 @@ DESCRIPTION
        pass these checks.
 
 DEPENDENCIES
-       Requires Python 3.10 or later, and that  the  Python  libraries  pyfive
+       Requires Python 3.11 or later, and that  the  Python  libraries  pyfive
        (https://pyfive.readthedocs.io), numpy (https://numpy.org), and packag‐
        ing (https://packaging.pypa.io) are available from a location given  by
        the PYTHONPATH environment variable.
