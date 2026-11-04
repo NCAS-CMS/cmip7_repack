@@ -101,6 +101,14 @@ and then repacked using \fBh5repack\fR, which changes the layout for
 objects in the new output file. All file attributes and data values
 are unchanged.
 
+.SH BIT REPRODUCABILITY
+
+Consecutive runs of \fBcmip7_repack\fR will produce netCDF datasets
+with identical scientific data and metadata content, but which have
+small differences in how their internal HDF5 structures are
+organised. These differences will result in the files having different
+checksums, but do not affect the usability of any dataset.
+
 .SH OPTIONS
 
 .TP

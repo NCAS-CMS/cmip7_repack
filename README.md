@@ -101,6 +101,13 @@ METHOD
        using h5repack, which changes the layout for objects in the new  output
        file. All file attributes and data values are unchanged.
 
+BIT REPRODUCABILITY
+       Consecuitve  runs of cmip7_repack will produce netCDF datasets with iden‐
+       tical scientific data and metadata content, but which have small  differ‐
+       ences  in how their internal HDF5 structures are organised. These differ‐
+       ences will result in the files having different checksums, but do not af‐
+       fect the usability of any dataset.
+
 OPTIONS
        -d size
               Rechunk  the  data  variable  (the  variable named by the "vari‐
